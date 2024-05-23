@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Parsing</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap");
+              * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: cursive;
+        }
+        body {
+        height: 100vh;
+<!--        border: 1px solid red;-->
+        background-color: #d9efc;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px 0px;
+        background: linear-gradient(to right, #fc5c7d, #6a82fb);
+        position: sticky;
+        width: 100%;
+      }
+      .header h1 {
+        color: rgb(51, 248, 159);
+        padding: 0px 40px;
+        font-style: normal;
+        padding-bottom: 10px;
+      }
+      .special-letter {
+        color: rgb(0, 1, 12); / Color for the special letter /
+        font-style: italic; / Remove italic style for the special letter /
+      }
+      .navbar {
+        padding: 0 100px 10px 0;
+      }
+      .navbar a {
+        text-decoration: none;
+        padding: 10px;
+        margin: 10px;
+        color: azure;
+      }
+      .login-btn {
+        color: black !important;
+        padding: 6px 10px 10px; / Adjust padding to make the button wider /
+        border-radius: 10px;
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+        background-color: rgb(51, 248, 159);
+      }
+            .login-btn:hover {
+        background-color: rgb(88, 227, 2);
+      }
+      .signup-btn {
+        padding: 6px 10px 10px;
+        border-radius: 10px;
+        background-color: rgb(26, 26, 25);
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",sans-serif;
+      }
+      .signup-btn:hover {
+        background-color: rgb(126, 182, 237);
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        / justify-content: space-between; /
+        / margin: 60px; /
+        / padding:90px; /
+      }
+      .image {
+        / width: 100%;  /
+        max-width: 500px;
+        border-radius: 20px;
+        margin: 20px auto;
+        display: block;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      }
+      .text {
+        display: flex;
+        margin: 20px;
+        padding: 10px 20px;
+        gap: 5px;
+      }
+      .content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .content > h1 {
+        font-family: "Times New Roman", Times, serif;
+        font-size: 40px;
+        color: rgb(238, 9, 150);
+        margin-bottom: 10px;
+      }
+      .content > p {
+        margin-bottom: 10px;
+        line-height: 20px;
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+      }
+      .content a {
+        border: 1px solid rgb(7, 7, 7);
+        border-radius: 10px;
+        width: 200px;
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+        font-weight: bolder;
+        padding: 10px 20px;
+        background-color: #f507b6;
+        text-decoration: none;
+        color: rgb(249, 247, 247);
+      }
+      .first-container {
+        margin: 20px;
+        max-width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .c1,
+      .c2,
+      .c3 {
+        display: flex;
+      }
+      .content-1 {
+        background-color: #f0bcee;
+        display: grid;
+        grid-template-columns: 500px 500px;
+        column-gap: 40px;
+      }
+      .content-1 p {
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+        padding: 10px;
+        width: 600px;
+      }
+      .content-1 p::first-letter {
+        font-weight: bolder;
+      }
+      .content-1 h1 {
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+        font-size: 25px;
+        margin: 10px;
+        text-shadow: 4px 4px 3px #f0bcee;
+      }
+      .content-2 {
+        / border: 1px solid red ; /
+        min-height: 200px;
+      }
+      / ats css /
+      summary {
+        cursor: pointer;
+        font-style: italic;
+        font-weight: bold; / Make the summary text bold /
+        font-size: 22px; / Increase font size /
+        color: #720176; / Set text color /
+        border-bottom: 2px solid #f0bcee; / Add a bottom border /
+        padding-bottom: 5px;
+        margin-top: 20px;
+        margin-bottom: 10px;
+      }
+
+      details > p {
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif; / Set font family /
+        font-size: 20px;
+        color: #333;
+        margin-top: 10px;
+      }
+      / login & signup styles /
+      .sign-up-form {
+        width: 300px;
+        box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3);
+        background: #fff;
+        padding: 20px;
+        margin: 8% auto;
+        text-align: center;
+      }
+      .sign-up-form h1 {
+        color: #1c8adb;
+        margin-bottom: 30px;
+      }
+      .sign-up-form img {
+        width: 50px;
+      }
+      .input-box {
+        border-radius: 20px;
+        padding: 10px;
+        margin: 10px 0;
+        width: 100%;
+        border: 1px solid #999;
+        outline: none;
+      }
+      .sign-up-form button {
+        color: #fff;
+        width: 100%;
+        padding: 10px;
+        border-radius: 20px;
+        font-size: 15px;
+        margin: 10px 0;
+        border: none;
+        outline: none;
+        cursor: pointer;
+      }
+      .signup-btn {
+        background-color: #1c8adb;
+      }
+
+      .footer {
+  position: relative;
+  width: 100%;
+  background: #3586ff;
+  min-height: 100px;
+  padding: 20px 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.social-icon,
+.menu {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+  flex-wrap: wrap;
+
+}
+
+.social-icon_item,
+.menu_item {
+  list-style: none;
+
+}
+.social-icon_link {
+  font-size: 1.5rem;
+  color: #fff;
+  margin: 0 10px;
+  display: inline-block;
+  transition: 0.5s;
+  text-decoration: none;
+}
+.social-icon_link:hover {
+  transform: translateY(-10px);
+}
+
+.menu_link {
+  font-size: 1.2rem;
+  color: #fff;
+  margin: 0 10px;
+  display: inline-block;
+  transition: 0.5s;
+  text-decoration: none;
+  opacity: 0.75;
+  font-weight: 300;
+  text-decoration: none;
+}
+
+.menu_link:hover {
+  opacity: 1;
+  color: black;
+}
+
+.footer p {
+  color: #fff;
+  margin: 15px 0 10px 0;
+  font-size: 1rem;
+  font-weight: 300;
+}
+
+.wave {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: url("https://i.ibb.co/wQZVxxk/wave.png");
+  background-size: 1000px 100px;
+}
+
+.wave#wave1 {
+  z-index: 1000;
+  opacity: 1;
+  bottom: 0;
+  animation: animateWaves 4s linear infinite;
+}
+
+.wave#wave2 {
+  z-index: 999;
+  opacity: 0.5;
+  bottom: 10px;
+  animation: animate 4s linear infinite !important;
+}
+
+.wave#wave3 {
+  z-index: 1000;
+  opacity: 0.2;
+  bottom: 15px;
+  animation: animateWaves 3s linear infinite;
+}
+
+.wave#wave4 {
+  z-index: 999;
+  opacity: 0.7;
+  bottom: 20px;
+  animation: animate 3s linear infinite;
+}
+.resume_upload_button{
+    background-color: rgb(238, 9, 150);
+    padding: 8px;
+    border: 2px none;
+    cursor: pointer;
+}
+        .progress-container {
+            margin-bottom: 50px;
+            text-align:center;
+        }
+        .progress-heading {
+            font-size: 20px;
+            margin-bottom: 5px;
+            text-align:center;
+            background: linear-gradient(to right, #fc5c7d, #6a82fb);
+        }
+        .progress {
+            width: 100%;
+            height: 30px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            line-height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+      <h1>RE<span class="special-letter">S</span>CAN</h1>
+      <nav class="navbar">
+          <a href="/previously-scanned-resumes">Previously Scanned Resumes</a>
+<!--        <a href="#" id="about-link">About</a>-->
+<!--        <a href="#">What is ATS?</a>-->
+        <a href="#" class="login-btn">Log In</a>
+        <a href="#" class="signup-btn">Sign Up</a>
+      </nav>
+    </header>
+    <section class="container">
+      <div>
+        <div class="text">
+          <div class="content">
+            <h1>
+              Supercharge Your Resume and Unlock Unlimited Career Opportunities!
+            </h1>
+            <p>
+              Don't let outdated resumes hold you back. Take the first step
+              towards career success and harness the power of our resume parser.
+              Stand out from the crowd with a professionally parsed resume that
+              highlights your strengths and accomplishments
+            </p>
+
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <label for="job_description">Enter job description:</label><br>
+        <textarea id="job_description" name="job_description" rows="4" cols="50"></textarea><br>
+        <input type="file" name="resume" accept=".txt,.doc,.docx">
+        <input class="resume_upload_button" type="submit" value="Scan Your Resume">
+    </form>
+          </div>
+          <div class="image-container">
+            <img
+              src="https://miro.medium.com/max/640/1*gZt3hUAjv1lFGwgo9JvhwQ.png"
+              class="image"
+            />
+          </div>
+        </div>
+          <!-- Display the scanned resume details -->
+          <div style="text-align:center;line-height:40px;margin-bottom:20px">
+              <h2 style="background: linear-gradient(to right, #fc5c7d, #6a82fb);font-size:20px">Scanned Resume Details:</h2>
+              <p style="color:rgb(238, 9, 150);font-weight:bold;">Filename: {{ resume_filename }}</p>
+          </div>
+          <div class="progress-container">
+        <h2 class="progress-heading">Resume Strength</h2>
+        <img src="{{ pie_chart_path }}" alt="Pie Chart" style="width: 400px; height: auto;">
+              <p>Matched Keywords Percentage: {{ matched_keywords_percentage }}%</p>
+          </div>
+      </div>
+
+        <!-- Display matched keywords -->
+<div style="text-align:center;line-height:40px">
+    <h2  style="background: linear-gradient(to right, #fc5c7d, #6a82fb);font-size:20px">Matched Keywords</h2>
+    <ul>
+        {% for keyword in matched_keywords %}
+            <li>{{ keyword }}</li>
+        {% endfor %}
+    </ul>
+</div>
+            <!-- Display skills -->
+    <div style="text-align:center;line-height:40px;margin-top:20px">
+        <h2 style="background: linear-gradient(to right, #fc5c7d, #6a82fb);font-size:20px">Skills</h2>
+        <ul>
+            {% for skill in resume_skills %}
+                <li>{{ skill }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+        <br><br>
+        <div class="content-1">
+          <div>
+            <img
+              src="https://www.shrmpro.com/wp-content/uploads/2020/08/Employee-Management.png"
+              style="
+                box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+                border-radius: 19px;
+                width: 400px;
+                height: 300px;
+                margin: 10px 20px;
+              "
+            />
+          </div>
+
+          <div>
+            <h1>Show that you're the perfect match...</h1>
+            <p>
+              Is your resume a good match for what a recruiter is looking for?
+              If it's not, you might miss out on interviews for jobs you feel
+              qualified for.In today's competitive job market, ensuring that
+              your resume aligns perfectly with the requirements of the
+              positions you're applying for is crucial. However, manually
+              tailoring your resume for each job application can be
+              time-consuming and daunting.Get proprietary AI analyzes your
+              resume and compares it to the job listing using AI technology.
+              Therefore, utilizing tools or techniques to streamline this
+              process, such as resume optimization services or online platforms
+              that offer personalized feedback based on job listings, can be
+              invaluable. These resources can help you highlight relevant skills
+              and experiences, optimize your resume's format and content, and
+              ultimately increase your chances of securing interviews for
+              positions you're qualified for in today's competitive job market.
+            </p>
+          </div>
+        </div>
+        <div class="content-2">
+          <input type="file" id="1" accept=".doc,.pdf" />
+        </div>
+      </div>
+    </section>
+    <footer class="footer">
+        <div class="waves">
+          <div class="wave" id="wave1"></div>
+          <div class="wave" id="wave2"></div>
+          <div class="wave" id="wave3"></div>
+          <div class="wave" id="wave4"></div>
+        </div>
+        <ul class="social-icon">
+          <li class="social-icon_item"><a class="social-icon_link" href="#">
+              <ion-icon name="logo-facebook"></ion-icon>
+            </a></li>
+          <li class="social-icon_item"><a class="social-icon_link" href="#">
+              <ion-icon name="logo-twitter"></ion-icon>
+            </a></li>
+          <li class="social-icon_item"><a class="social-icon_link" href="#">
+              <ion-icon name="logo-linkedin"></ion-icon>
+            </a></li>
+          <li class="social-icon_item"><a class="social-icon_link" href="#">
+              <ion-icon name="logo-instagram"></ion-icon>
+            </a></li>
+        </ul>
+        <ul class="menu">
+          <li class="menu_item"><a class="menu_link" href="#">Services</a></li>
+          <li class="menu_item"><a class="menu_link" href="#">Team</a></li>
+          <li class="menu_item"><a class="menu_link" href="#">Contact</a></li>
+
+        </ul>
+        <p>&copy;2024 Team 10 | All Rights Reserved</p>
+      </footer>
+
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previously Scanned Resumes</title>
+    <style>
+        #skill-dropdown{
+        margin-left:45.5%;
+        margin-bottom:20px;
+        font-size:15px;
+        padding:7px;
+        border-radius:10px;
+        width:140px;
+        }
+        body {
+        top:0px;
+        font-family: cursive;
+        display:flex;
+        justify-content:space-around;
+        flex-direction:column;
+        }
+    </style>
+</head>
+<body style="text-align:center;">
+    <h1 style="text-align:center;background: linear-gradient(to right, #fc5c7d, #6a82fb);">Previously Scanned Resumes</h1>
+
+    <!-- Dropdown menu for skills -->
+    <label style="color:rgb(238, 9, 150);font-weight:bold;" for="skill-dropdown">Select Skill:</label>
+    <select id="skill-dropdown">
+        <option value="">All Skills</option>
+        {% for skill in skills %}
+            <option value="{{ skill }}">{{ skill }}</option>
+        {% endfor %}
+    </select>
+
+    <table style="text-align:center;line-height:30px;border: 1px solid black;background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(214,218,223,1) 100%);">
+        <thead style="border: 1px solid black;color:rgb(238, 9, 150);">
+            <tr style="border: 1px solid black;">
+                <th style="border: 1px solid black;">Filename</th>
+                <th style="border: 1px solid black;">Matched Keywords Percentage</th>
+                <th style="border: 1px solid black;">Skills</th>
+            </tr>
+        </thead>
+        <tbody style="border: 1px solid black;">
+            {% for resume in resumes %}
+                <tr style="border: 1px solid black;">
+                    <td style="border: 1px solid black;">{{ resume[1] }}</td> <!-- Assuming filename is in the second column -->
+                    <td style="border: 1px solid black;">{{ resume[2] }}</td> <!-- Assuming matched_keywords_percentage is in the third column -->
+                    <td style="border: 1px solid black;">{{ resume[3] }}</td> <!-- Assuming skills is in the fourth column -->
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- JavaScript to filter table based on selected skill -->
+    <script>
+        document.getElementById('skill-dropdown').addEventListener('change', function() {
+            var selectedSkill = this.value.toLowerCase();
+            var tableRows = document.getElementsByTagName('tr');
+            for (var i = 1; i < tableRows.length; i++) {
+                var cells = tableRows[i].getElementsByTagName('td');
+                var skillsCell = cells[2].textContent.toLowerCase(); // Assuming skills are in the third column
+                if (selectedSkill === '' || skillsCell.includes(selectedSkill)) {
+                    tableRows[i].style.display = '';
+                } else {
+                    tableRows[i].style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
